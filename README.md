@@ -9,6 +9,7 @@ Book2Markdown converts EPUB and PDF ebooks into clean Markdown files.
 - Export extracted images into `output/images/`
 - Generate UTF-8 Markdown as `book.md`
 - Provide a Gradio web UI for preview and download
+- Optional MinerU provider path for scanned PDFs and images
 
 ## Installation
 
@@ -46,6 +47,35 @@ Convert an ebook:
 curl -X POST http://127.0.0.1:8000/convert ^
   -F "file=@sample.pdf" ^
   -o book.md
+```
+
+Use the optional MinerU provider:
+
+```bash
+curl -X POST "http://127.0.0.1:8000/convert?use_mineru=true" ^
+  -F "file=@sample.pdf" ^
+  -o book.md
+```
+
+## MinerU Provider
+
+MinerU support is optional. The default EPUB/PDF converters do not require it.
+
+Install and configure MinerU separately, then enable it in the UI with
+`Use MinerU for PDFs/images` or in the API with `use_mineru=true`.
+
+Environment variables:
+
+- `BOOK2MARKDOWN_MINERU_COMMAND`: MinerU CLI command. Default: `mineru`
+- `BOOK2MARKDOWN_MINERU_METHOD`: MinerU parse method. Default: `auto`
+- `BOOK2MARKDOWN_MINERU_BACKEND`: optional MinerU backend
+- `BOOK2MARKDOWN_MINERU_API_URL`: optional MinerU API URL
+- `BOOK2MARKDOWN_MINERU_TIMEOUT`: timeout in seconds. Default: `1800`
+
+The provider calls:
+
+```bash
+mineru -p input.pdf -o output/mineru -m auto
 ```
 
 ## Testing
@@ -92,8 +122,6 @@ Planned future architecture support:
 
 - MOBI
 - AZW3
-- OCR
-- MinerU integration
 - LLM cleanup
 - Obsidian export
 - Batch processing
@@ -101,5 +129,5 @@ Planned future architecture support:
 ## Current Limitations
 
 - PDF conversion works best with text-based PDFs.
-- Scanned PDFs require OCR and are planned for a future version.
+- Scanned PDFs and images require optional MinerU setup.
 - LLM cleanup is intentionally not implemented in V1.

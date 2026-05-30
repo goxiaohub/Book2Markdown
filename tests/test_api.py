@@ -45,3 +45,27 @@ def test_convert_endpoint_rejects_unknown_format(tmp_path: Path) -> None:
         )
 
     assert response.status_code == 400
+
+
+def test_convert_endpoint_accepts_image_only_when_mineru_is_enabled(
+    tmp_path: Path,
+) -> None:
+    client = TestClient(api_app)
+    sample_path = tmp_path / "sample.png"
+    sample_path.write_bytes(b"not a real image")
+
+    with sample_path.open("rb") as sample_file:
+        response = client.post(
+            "/convert",
+            files={"file": ("sample.png", sample_file, "image/png")},
+        )
+
+    assert response.status_code == 400
+
+    with sample_path.open("rb") as sample_file:
+        response = client.post(
+            "/convert?use_mineru=true",
+            files={"file": ("sample.png", sample_file, "image/png")},
+        )
+
+    assert response.status_code in {500, 503}

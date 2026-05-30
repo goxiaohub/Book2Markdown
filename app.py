@@ -6,6 +6,7 @@ from pathlib import Path
 import gradio as gr
 
 from services.conversion_service import (
+    ConversionProviderError,
     UnsupportedFormatError,
     convert_book_to_markdown,
 )
@@ -22,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent
 OUTPUT_DIR = BASE_DIR / "output"
 
 
-def convert_book(file_path: str | None) -> tuple[str, str | None]:
+def convert_book(file_path: str | None, use_mineru: bool) -> tuple[str, str | None]:
     """Convert an uploaded ebook and return a preview plus download path."""
     if not file_path:
         return "Please upload an EPUB or PDF file first.", None
@@ -30,10 +31,13 @@ def convert_book(file_path: str | None) -> tuple[str, str | None]:
     source = Path(file_path)
 
     try:
-        result = convert_book_to_markdown(source, OUTPUT_DIR)
+        result = convert_book_to_markdown(source, OUTPUT_DIR, use_mineru=use_mineru)
         return result.markdown, str(result.markdown_path)
     except UnsupportedFormatError as exc:
         return str(exc), None
+    except ConversionProviderError as exc:
+        logger.exception("External provider conversion failed")
+        return f"Provider conversion failed: {exc}", None
     except Exception as exc:
         logger.exception("Conversion failed")
         return f"Conversion failed: {exc}", None
@@ -47,8 +51,12 @@ def build_ui() -> gr.Blocks:
 
         ebook_file = gr.File(
             label="Upload File",
-            file_types=[".epub", ".pdf"],
+            file_types=[".epub", ".pdf", ".png", ".jpg", ".jpeg", ".webp", ".bmp"],
             type="filepath",
+        )
+        use_mineru = gr.Checkbox(
+            label="Use MinerU for PDFs/images",
+            value=False,
         )
         convert_button = gr.Button("Convert", variant="primary")
         markdown_preview = gr.Markdown(label="Preview Markdown")
@@ -56,7 +64,7 @@ def build_ui() -> gr.Blocks:
 
         convert_button.click(
             fn=convert_book,
-            inputs=ebook_file,
+            inputs=[ebook_file, use_mineru],
             outputs=[markdown_preview, markdown_download],
             show_progress="full",
             show_api=False,
