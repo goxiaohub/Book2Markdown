@@ -1,0 +1,3 @@
+﻿
+2026-05-31 11:36:22,458 | INFO     | book2markdown:setup_logger:74 | Logger initialized (stdlib logging)
+2026-05-31 11:36:22,458 | INFO     | book2markdown.test:<module>:6 | Utils module working (stdlib logging fallback)

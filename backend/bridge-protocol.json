@@ -1,0 +1,73 @@
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Book2Markdown Bridge Protocol",
+  "description": "Tauri Rust <-> Python MarkItDown 通信协议 v1.0",
+  "version": "1.0",
+  "transport": {
+    "method": "subprocess",
+    "command": "python -m src.converter <action> [args...]",
+    "encoding": "JSON via stdout",
+    "exit_codes": {
+      "0": "成功",
+      "1": "失败"
+    }
+  },
+  "actions": {
+    "health": {
+      "description": "健康检查，验证 MarkItDown 是否可用",
+      "args": [],
+      "response": {
+        "success": true,
+        "data": {
+          "status": "healthy",
+          "engine": "markitdown",
+          "protocol": "1.0",
+          "supported_formats_count": 20,
+          "supported_extensions": [".pdf", ".epub", "..."]
+        }
+      }
+    },
+    "convert": {
+      "description": "转换单个文件为 Markdown",
+      "args": ["<file_path>"],
+      "response": {
+        "success": true,
+        "data": {
+          "markdown": "# Title\n...",
+          "filename": "output.md",
+          "metadata": {
+            "source_file": "input.pdf",
+            "source_format": "PDF",
+            "source_extension": ".pdf",
+            "source_size_bytes": 12345,
+            "markdown_length": 678,
+            "conversion_time_seconds": 1.234
+          }
+        }
+      }
+    },
+    "batch": {
+      "description": "批量转换多个文件",
+      "args": ["<file1>", "<file2>", "..."],
+      "response": {
+        "success": true,
+        "data": {
+          "results": [
+            { "success": true, "data": { "markdown": "...", "..." } },
+            { "success": false, "error": "..." }
+          ]
+        }
+      }
+    }
+  },
+  "error_response": {
+    "protocol": "1.0",
+    "success": false,
+    "data": {},
+    "error": "错误描述信息"
+  },
+  "timeout": {
+    "default_seconds": 120,
+    "description": "单个转换超时时间（秒）"
+  }
+}

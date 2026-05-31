@@ -1,0 +1,2 @@
+﻿markitdown>=0.0.1a1
+loguru>=0.7.2

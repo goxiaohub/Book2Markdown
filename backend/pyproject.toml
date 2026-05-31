@@ -1,0 +1,19 @@
+﻿[project]
+name = "book2markdown-backend"
+version = "0.1.0"
+description = "Python backend for Book2Markdown Desktop - document conversion using Microsoft MarkItDown"
+requires-python = ">=3.10"
+dependencies = [
+    "markitdown>=0.0.1a1",
+    "loguru>=0.7.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.4",
+]
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"

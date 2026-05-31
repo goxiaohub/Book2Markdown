@@ -1,0 +1,64 @@
+﻿{
+  "$schema": "https://raw.githubusercontent.com/nicedoc/tauri/dev/packages/tauri-utils/schema.json",
+  "productName": "Book2Markdown Desktop",
+  "version": "0.1.0",
+  "identifier": "com.book2markdown.desktop",
+  "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:5173",
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Book2Markdown Desktop",
+        "width": 1200,
+        "height": 800,
+        "minWidth": 900,
+        "minHeight": 600,
+        "center": true,
+        "resizable": true,
+        "decorations": true,
+        "transparent": false,
+        "alwaysOnTop": false,
+        "dragDropEnabled": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "windows": {
+      "wix": {
+        "language": "zh-CN"
+      }
+    },
+    "macOS": {
+      "minimumSystemVersion": "10.15"
+    }
+  },
+  "plugins": {
+    "shell": {
+      "open": true,
+      "scope": [{ "name": "python", "cmd": "python", "args": true }]
+    },
+    "fs": {
+      "scope": ["$APPDATA/**", "$DOCUMENT/**", "$DESKTOP/**", "$HOME/**"]
+    },
+    "dialog": {
+      "open": true,
+      "save": true
+    }
+  }
+}
